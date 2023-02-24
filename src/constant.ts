@@ -11,3 +11,7 @@ export const allowedMessageTypes = [
 ];
 export const sliceIds = [];
 export const endOfStream = "";
+export const noContentTimeout = 10000;
+export const contentIntervalTimeout = 3000;
+export const nextLineIdentifier = "[NEXTLINE]";
+export const eventEndIdentifier = "[END]";

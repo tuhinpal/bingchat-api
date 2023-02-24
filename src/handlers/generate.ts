@@ -1,7 +1,11 @@
 import WebSocket from "ws";
 import {
   allowedMessageTypes,
+  contentIntervalTimeout,
+  eventEndIdentifier,
   locale,
+  nextLineIdentifier,
+  noContentTimeout,
   optionSets,
   region,
   sliceIds,
@@ -34,9 +38,9 @@ async function generate(req: Request, res: Response) {
 
     let data = "";
 
-    await new Promise((resolve, reject) => {
+    await new Promise((resolve) => {
       ws.on("error", () => {
-        reject("Connection error");
+        throw new Error("Connection error");
       });
 
       ws.on("open", async () => {
@@ -77,7 +81,9 @@ async function generate(req: Request, res: Response) {
         );
       });
 
-      let timeout: NodeJS.Timeout | undefined;
+      let timeout: NodeJS.Timeout | undefined = setTimeout(() => {
+        throw new Error("Taking too long");
+      }, noContentTimeout);
 
       ws.on("message", (message) => {
         try {
@@ -89,43 +95,50 @@ async function generate(req: Request, res: Response) {
             case 1:
               let jsonobj = json.arguments[0].messages[0];
               let textdata = jsonobj.text;
-              if (timeout) clearTimeout(timeout);
+              if (timeout) {
+                clearTimeout(timeout);
+                timeout = undefined;
+              }
 
               if (!textdata.includes("Searching the web")) {
                 if (!jsonobj.messageType) {
                   data = textdata;
-                  sendEvent(data);
+                  let replaced = data.replace(
+                    /(\r\n|\n|\r)/gm,
+                    nextLineIdentifier
+                  );
+                  sendEvent(replaced);
                 }
 
                 timeout = setTimeout(() => {
                   console.log("Resolved by timeout");
                   ws.close();
                   resolve("Resolved by timeout");
-                }, 3000);
+                }, contentIntervalTimeout);
               }
 
               break;
 
             case 7:
               ws.close();
-              resolve("Ok");
+              resolve("Maybe resolved");
           }
 
           if (json.error) {
             ws.close();
-            reject(json.error);
+            throw new Error(json.error);
           }
         } catch (e) {}
       });
     });
 
-    if (!data) throw new Error("No data generated, please try agains");
-    sendEvent("END");
+    if (!data) throw new Error("No data generated, please try again");
+    sendEvent(eventEndIdentifier);
     res.end();
   } catch (error: any) {
     res.status(500);
     sendEvent(`Error: ${error.message}`);
-    sendEvent("END");
+    sendEvent(eventEndIdentifier);
     res.end();
   }
 }
