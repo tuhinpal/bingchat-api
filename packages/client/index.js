@@ -6,24 +6,23 @@ Creates a conversation with the specified URL and headers.
 @returns {Promise<Object>} An object containing information about the created conversation.
 */
 async function createConversation(url, headers = {}) {
-  let axios;
+  let fetch;
 
-  try {
-    // Try importing the ESM version of axios
-    axios = (await import("axios")).default;
-  } catch (e) {
-    // If that fails, assume we're in a CommonJS environment and require the CJS version of axios
-    axios = require("axios");
+  // Try importing the ESM version of axios
+  if (typeof window === "undefined") {
+    fetch = require("node-fetch");
+  } else {
+    fetch = window.fetch;
   }
 
-  const response = await axios.post(
-    `${url}/create-conversation`,
-    {},
-    {
-      headers: headers || {},
-    }
-  );
-  const data = response.data;
+  const response = await fetch(`${url}/create-conversation`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...headers,
+    },
+  });
+  const data = await response.json();
 
   return {
     conversationId: data.conversationId,

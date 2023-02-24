@@ -1,17 +1,14 @@
 {
   "name": "bing-chatai-client",
   "private": false,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "Bing chatai client",
   "main": "index.js",
-  "scripts": {
-    "npmpublish": "npm run build && npm publish"
-  },
+  "scripts": {},
   "author": "Tuhin Kanti Pal <me@thetuhin.com>",
   "license": "ISC",
-  "dependencies": {},
-  "devDependencies": {
-    "tsup": "^6.6.3"
+  "dependencies": {
+    "node-fetch": "^3.3.0"
   }
 }
