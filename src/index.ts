@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.post("/createConversation", createConversation);
+app.post("/create-conversation", createConversation);
 app.post("/generate", generate);
 app.post("/set-cookie", setCookie);
 
