@@ -1,4 +1,5 @@
-![Bing Chat API](https://export-download.canva.com/k5ze8/DAFbjFk5ze8/8/0/0001-4294355171.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAJHKNGJLC2J7OGJ6Q%2F20230225%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230225T043534Z&X-Amz-Expires=8069&X-Amz-Signature=7c1941c599f0f9699103c196f5e69f7f8ce183bcc3ea286baa4e8c181c78298a&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%2A%3DUTF-8%27%27bingchat-api.jpg&response-expires=Sat%2C%2025%20Feb%202023%2006%3A50%3A03%20GMT)
+![Bing Chat API](https://user-images.githubusercontent.com/51857187/221339911-75f3e232-1c7b-4877-b3fe-8a1b77c5c744.jpg)
+
 
 ## Deployment
 
@@ -24,7 +25,7 @@ Or, You can fork this repository and connect it to any provider which supports D
 
 ## Post Deploy
 
-This api need your cookie to generate conversation. So, you should have beta access. After deployment login to that bing account and open developer console. Then paste the code (replace your serverurl).
+This api need your cookie to generate conversation. So, you should have beta access. After deployment login to that bing account and open developer console. Then paste the code (replace your `serverUrl`).
 
 ```javascript
 const cookie = document.cookie;
