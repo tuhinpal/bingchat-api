@@ -1,6 +1,5 @@
 ![Bing Chat API](https://user-images.githubusercontent.com/51857187/221339911-75f3e232-1c7b-4877-b3fe-8a1b77c5c744.jpg)
 
-
 ## Deployment
 
 Deploy natively
@@ -53,7 +52,7 @@ fetch(`${serverUrl}/set-cookie`, {
 
 #### Generate
 
-```http
+```
   GET /generate
 ```
 
@@ -64,11 +63,13 @@ fetch(`${serverUrl}/set-cookie`, {
 | `conversationSignature` | `string` | **Required**. Get it after `/create-conversation` |
 | `text`                  | `string` | **Required**. Text prompt                         |
 
-**Note:** It used EventSource stream to send content upon generation.
+**Note:** It uses EventSource stream to send content upon generation.
 
-#### Use the client library to implement these with ease
+## Client library
 
-```bash
+Use the client library to implement these with ease.
+
+```
 npm install bing-chatai-client
 ```
 
@@ -110,13 +111,4 @@ Contributions are always welcome!
 
 ## License and Leagal
 
-This project is licensed under [Apache-2.0](https://choosealicense.com/licenses/apache-2.0/). This project is made as a proof of concept and doesnot meant to harm microsoft.
-
-## Color Reference
-
-| Color         | Hex                                                              |
-| ------------- | ---------------------------------------------------------------- |
-| Example Color | ![#0a192f](https://via.placeholder.com/10/0a192f?text=+) #0a192f |
-| Example Color | ![#f8f8f8](https://via.placeholder.com/10/f8f8f8?text=+) #f8f8f8 |
-| Example Color | ![#00b48a](https://via.placeholder.com/10/00b48a?text=+) #00b48a |
-| Example Color | ![#00d1a0](https://via.placeholder.com/10/00b48a?text=+) #00d1a0 |
+This project is licensed under [Apache-2.0](https://github.com/tuhinpal/bingchat-api/blob/master/LICENSE). This project is made as a proof of concept and doesnot meant to harm microsoft.
