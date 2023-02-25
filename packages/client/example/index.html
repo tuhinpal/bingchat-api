@@ -14,28 +14,20 @@
     const conversation = await createConversation("http://localhost:8080");
     console.log(conversation);
 
-    const conv1 = new Generate(
-      conversation.conversationUrl,
-      "Hello bing what is an ai?"
-    );
+    const gen = new Generate(conversation.conversationUrl);
 
-    console.log(conv1);
+    gen.generate("Hello bing what is an ai?");
 
-    conv1.onMessage = (e) => {
-      console.log("Message received");
-      console.log(e.data);
-    };
+    gen.onMessage((data) => {
+      console.log(data);
+    });
 
-    conv1.onClose = (e) => {
-      console.log("Connection closed");
-    };
+    gen.onFinished((message) => {
+      console.info(message);
+    });
 
-    conv1.onError = (e) => {
-      console.log("Error");
-    };
-
-    conv1.onOpen = (e) => {
-      console.log("Connection opened");
-    };
+    gen.onError((message) => {
+      console.error(message);
+    });
   </script>
 </html>

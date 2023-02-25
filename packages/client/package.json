@@ -1,7 +1,7 @@
 {
   "name": "bing-chatai-client",
   "private": false,
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "description": "Bing chatai client",
   "main": "index.js",
@@ -10,5 +10,20 @@
   "license": "ISC",
   "dependencies": {
     "node-fetch": "^3.3.0"
-  }
+  },
+  "directories": {
+    "example": "example"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tuhinpal/bingchat-api.git#master"
+  },
+  "keywords": [
+    "bingchat"
+  ],
+  "bugs": {
+    "url": "https://github.com/tuhinpal/bingchat-api/issues"
+  },
+  "homepage": "https://github.com/tuhinpal/bingchat-api/tree/master#readme"
 }

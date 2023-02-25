@@ -24,16 +24,17 @@ async function createConversation(url, headers = {}) {
   });
   const data = await response.json();
 
+  const conversationUrl = `${url}/generate?conversationId=${encodeURIComponent(
+    data.conversationId
+  )}&clientId=${encodeURIComponent(
+    data.clientId
+  )}&conversationSignature=${encodeURIComponent(data.conversationSignature)}`;
+
   return {
     conversationId: data.conversationId,
     clientId: data.clientId,
     conversationSignature: data.conversationSignature,
-    // encode uri
-    conversationUrl: `${url}/generate?conversationId=${encodeURIComponent(
-      data.conversationId
-    )}&clientId=${encodeURIComponent(
-      data.clientId
-    )}&conversationSignature=${encodeURIComponent(data.conversationSignature)}`,
+    conversationUrl: conversationUrl,
   };
 }
 
@@ -45,39 +46,72 @@ async function createConversation(url, headers = {}) {
   @returns {EventSource} The generated event source.
   */
 class Generate {
-  constructor(conversationUrl, text) {
+  constructor(conversationUrl) {
     this.conversationUrl = conversationUrl;
-    this.text = text;
+    this.eventSource = null;
+  }
+
+  close() {
+    if (this.eventSource) {
+      this.eventSource.close();
+      this.eventSource = null;
+    }
+  }
+
+  throwIfEventNotConstructed() {
+    if (!this.eventSource) {
+      throw new Error(
+        "Event source is not constructed. call generate() first."
+      );
+    }
+  }
+
+  generate(text) {
     this.eventSource = new EventSource(
-      `${this.conversationUrl}&text=${encodeURIComponent(this.text)}`
+      `${this.conversationUrl}&text=${encodeURIComponent(text)}`
     );
   }
 
   onMessage(callback) {
-    this.eventSource.onmessage = (event) => {
-      callback(event);
-
-      if (event.data === "[END]") {
-        console.log("Conversation ended");
-        this.eventSource.close();
+    this.throwIfEventNotConstructed();
+    this.eventSource.addEventListener("message", (event) => {
+      if (event.data !== "[END]" && !event.data.startsWith("[ERROR]")) {
+        callback(event.data);
       }
-    };
+    });
+  }
+
+  onFinished(callback) {
+    this.throwIfEventNotConstructed();
+    this.eventSource.addEventListener("message", (event) => {
+      if (event.data === "[END]") {
+        callback("Stream ended");
+        close();
+      }
+    });
   }
 
   onError(callback) {
-    this.eventSource.onerror = (event) => {
-      callback(event);
-    };
+    this.throwIfEventNotConstructed();
+    this.eventSource.addEventListener("error", (event) => {
+      callback("An error occurred while attempting to connect");
+      close();
+    });
+
+    this.eventSource.addEventListener("message", (event) => {
+      if (event.data.startsWith("[ERROR]")) {
+        let errordata = event.data.replace("[ERROR] ", "");
+        callback(errordata);
+        close();
+      }
+    });
   }
 
   onOpen(callback) {
-    this.eventSource.onopen = (event) => {
+    this.throwIfEventNotConstructed();
+    this.eventSource.addEventListener("open", (event) => {
       callback(event);
-    };
-  }
-
-  close() {
-    this.eventSource.close();
+    });
   }
 }
 
