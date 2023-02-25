@@ -46,7 +46,7 @@ fetch(`${serverUrl}/set-cookie`, {
 
 #### Create a conversation
 
-```http
+```
   POST /create-conversation
 ```
 
