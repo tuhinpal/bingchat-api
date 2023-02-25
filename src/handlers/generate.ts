@@ -2,6 +2,7 @@ import WebSocket from "ws";
 import {
   allowedMessageTypes,
   contentIntervalTimeout,
+  errorIdentifier,
   eventEndIdentifier,
   locale,
   nextLineIdentifier,
@@ -24,7 +25,14 @@ async function generate(req: Request, res: Response) {
   }
 
   try {
-    const { conversationId, clientId, conversationSignature, text } = req.body;
+    const { conversationId, clientId, conversationSignature, text } =
+      req.query as {
+        conversationId: string;
+        clientId: string;
+        conversationSignature: string;
+        text: string;
+      };
+
     if (!conversationId || !clientId || !conversationSignature || !text) {
       throw new Error(
         "Missing required parameters: conversationId, clientId, conversationSignature, text"
@@ -38,7 +46,7 @@ async function generate(req: Request, res: Response) {
 
     let data = "";
 
-    await new Promise((resolve) => {
+    await new Promise((resolve, reject) => {
       ws.on("error", () => {
         throw new Error("Connection error");
       });
@@ -82,7 +90,7 @@ async function generate(req: Request, res: Response) {
       });
 
       let timeout: NodeJS.Timeout | undefined = setTimeout(() => {
-        throw new Error("Taking too long");
+        reject(new Error("Taking too long"));
       }, noContentTimeout);
 
       ws.on("message", (message) => {
@@ -126,7 +134,7 @@ async function generate(req: Request, res: Response) {
 
           if (json.error) {
             ws.close();
-            throw new Error(json.error);
+            reject(new Error(json.error));
           }
         } catch (e) {}
       });
@@ -136,8 +144,7 @@ async function generate(req: Request, res: Response) {
     sendEvent(eventEndIdentifier);
     res.end();
   } catch (error: any) {
-    res.status(500);
-    sendEvent(`Error: ${error.message}`);
+    sendEvent(`${errorIdentifier} ${error.message}`);
     sendEvent(eventEndIdentifier);
     res.end();
   }

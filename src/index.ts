@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(cors());
 
 app.post("/create-conversation", createConversation);
-app.post("/generate", generate);
+app.get("/generate", generate);
 app.post("/set-cookie", setCookie);
 
 const port = process.env.PORT || 8080;

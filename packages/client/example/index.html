@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test</title>
+  </head>
+  <body></body>
+
+  <script type="module">
+    import { createConversation, Generate } from "../index.js";
+
+    const conversation = await createConversation("http://localhost:8080");
+    console.log(conversation);
+
+    const conv1 = new Generate(
+      conversation.conversationUrl,
+      "Hello bing what is an ai?"
+    );
+
+    console.log(conv1);
+
+    conv1.onMessage = (e) => {
+      console.log("Message received");
+      console.log(e.data);
+    };
+
+    conv1.onClose = (e) => {
+      console.log("Connection closed");
+    };
+
+    conv1.onError = (e) => {
+      console.log("Error");
+    };
+
+    conv1.onOpen = (e) => {
+      console.log("Connection opened");
+    };
+  </script>
+</html>

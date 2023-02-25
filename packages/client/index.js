@@ -44,9 +44,41 @@ async function createConversation(url, headers = {}) {
   @param {string} text - The text to include in the event source.
   @returns {EventSource} The generated event source.
   */
-function generate(conversationUrl, text) {
-  const eventSource = new EventSource(`${conversationUrl}&text=${text}`);
-  return eventSource;
+class Generate {
+  constructor(conversationUrl, text) {
+    this.conversationUrl = conversationUrl;
+    this.text = text;
+    this.eventSource = new EventSource(
+      `${this.conversationUrl}&text=${encodeURIComponent(this.text)}`
+    );
+  }
+
+  onMessage(callback) {
+    this.eventSource.onmessage = (event) => {
+      callback(event);
+
+      if (event.data === "[END]") {
+        console.log("Conversation ended");
+        this.eventSource.close();
+      }
+    };
+  }
+
+  onError(callback) {
+    this.eventSource.onerror = (event) => {
+      callback(event);
+    };
+  }
+
+  onOpen(callback) {
+    this.eventSource.onopen = (event) => {
+      callback(event);
+    };
+  }
+
+  close() {
+    this.eventSource.close();
+  }
 }
 
-export { createConversation, generate };
+export { createConversation, Generate };
