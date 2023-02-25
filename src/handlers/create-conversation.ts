@@ -14,11 +14,18 @@ async function createConversation(req: Request, res: Response) {
       throw new Error("Error creating conversation");
     }
 
+    const conversationPath = `/generate?conversationId=${encodeURIComponent(
+      data.conversationId
+    )}&clientId=${encodeURIComponent(
+      data.clientId
+    )}&conversationSignature=${encodeURIComponent(data.conversationSignature)}`;
+
     res.json({
       message: "Conversation created successfully",
       conversationId: data.conversationId,
       clientId: data.clientId,
       conversationSignature: data.conversationSignature,
+      conversationPath,
     });
   } catch (error: any) {
     res.status(500).json({ message: error.message });

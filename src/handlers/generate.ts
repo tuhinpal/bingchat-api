@@ -47,14 +47,23 @@ async function generate(req: Request, res: Response) {
     let data = "";
 
     await new Promise((resolve, reject) => {
+      let timeout: NodeJS.Timeout | undefined = setTimeout(() => {
+        ws.close();
+        reject(new Error("Taking too long"));
+      }, noContentTimeout);
+
       ws.on("error", () => {
-        throw new Error("Connection error");
+        if (timeout) clearTimeout(timeout);
+        reject(new Error("Connection error"));
+      });
+
+      ws.on("close", () => {
+        if (timeout) clearTimeout(timeout);
       });
 
       ws.on("open", async () => {
         ws.send(packJson({ protocol: "json", version: 1 }));
         ws.send(packJson({ type: 6 }));
-        await new Promise((resolve) => setTimeout(resolve, 1000));
         ws.send(
           packJson({
             arguments: [
@@ -89,10 +98,6 @@ async function generate(req: Request, res: Response) {
         );
       });
 
-      let timeout: NodeJS.Timeout | undefined = setTimeout(() => {
-        reject(new Error("Taking too long"));
-      }, noContentTimeout);
-
       ws.on("message", (message) => {
         try {
           let response = message.toString();
@@ -103,10 +108,6 @@ async function generate(req: Request, res: Response) {
             case 1:
               let jsonobj = json.arguments[0].messages[0];
               let textdata = jsonobj.text;
-              if (timeout) {
-                clearTimeout(timeout);
-                timeout = undefined;
-              }
 
               if (!textdata.includes("Searching the web")) {
                 if (!jsonobj.messageType) {
@@ -118,6 +119,8 @@ async function generate(req: Request, res: Response) {
                   sendEvent(replaced);
                 }
 
+                if (timeout) clearTimeout(timeout);
+
                 timeout = setTimeout(() => {
                   console.log("Resolved by timeout");
                   ws.close();
@@ -127,9 +130,32 @@ async function generate(req: Request, res: Response) {
 
               break;
 
+            case 2:
+              if (json.item?.result?.error)
+                reject(new Error(json.item.result.error));
+              if (json.item?.result?.value === "InvalidSession")
+                reject(new Error("Invalid session, please generate again"));
+
+              if (!data) {
+                let botmessage = json.item.messages?.find(
+                  (m: any) => m.author === "bot"
+                );
+
+                if (botmessage && botmessage.hiddenText) {
+                  data = botmessage.hiddenText;
+                  let replaced = data.replace(
+                    /(\r\n|\n|\r)/gm,
+                    nextLineIdentifier
+                  );
+                  sendEvent(replaced);
+                }
+              }
+              break;
+
             case 7:
               ws.close();
               resolve("Maybe resolved");
+              break;
           }
 
           if (json.error) {
