@@ -1,9 +1,13 @@
-import axios from "../utils/axios-instance";
+import axios, { getCookie } from "../utils/axios-instance";
 import { Request, Response } from "express";
 
 async function createConversation(req: Request, res: Response) {
   try {
-    const response = await axios.get("/turing/conversation/create");
+    const response = await axios.get("/turing/conversation/create", {
+      headers: {
+        cookie: getCookie(),
+      },
+    });
     const data = response.data;
 
     if (data.result.value !== "Success") {
