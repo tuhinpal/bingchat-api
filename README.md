@@ -63,7 +63,7 @@ fetch(`${serverUrl}/set-cookie`, {
 | `conversationSignature` | `string` | **Required**. Get it after `/create-conversation` |
 | `text`                  | `string` | **Required**. Text prompt                         |
 
-**Note:** It uses EventSource stream to send content upon generation.
+**Note:** It uses [EventSource](https://developer.mozilla.org/en-US/docs/Web/API/EventSource) stream to send content upon generation.
 
 ## Client library
 
