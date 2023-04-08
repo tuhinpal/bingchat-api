@@ -109,6 +109,6 @@ If you have any feedback, please reach me out at me[at]thetuhin.com.
 
 Contributions are always welcome!
 
-## License and Leagal
+## License and Legal
 
 This project is licensed under [MIT](https://github.com/tuhinpal/bingchat-api/blob/master/LICENSE). This project is made as a proof of concept and doesnot meant to harm microsoft.
