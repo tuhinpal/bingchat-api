@@ -17,7 +17,7 @@ async function createConversation(req: Request, res: Response) {
     // fix to catch the new security-challence signature from response-headers
     //console.log("Response Headers:", response.headers);
     if (!data.conversationSignature) {
-      data.publicConversationSignature = response.headers['x-sydney-conversationsignature'];
+      data.conversationSignature = response.headers['x-sydney-conversationsignature'];
       data.encryptedConversationSignature = response.headers['x-sydney-encryptedconversationsignature'];
     }
 
