@@ -17,8 +17,7 @@ async function createConversation(req: Request, res: Response) {
     // fix to catch the new security-challence signature from response-headers
     //console.log("Response Headers:", response.headers);
     if (!data.conversationSignature) {
-      data.conversationSignature = response.headers['x-sydney-conversationsignature'];
-      data.encryptedConversationSignature = response.headers['x-sydney-encryptedconversationsignature'];
+      data.conversationSignature = response.headers['x-sydney-encryptedconversationsignature'];
     }
 
     const conversationPath = `/generate?conversationId=${encodeURIComponent(
@@ -31,8 +30,7 @@ async function createConversation(req: Request, res: Response) {
       message: "Conversation created successfully",
       conversationId: data.conversationId,
       clientId: data.clientId,
-      publicConversationSignature: data.conversationSignature,
-      encryptedConversationSignature: data.encryptedConversationSignature,
+      conversationSignature: data.conversationSignature,
       conversationPath,
     });
   } catch (error: any) {
