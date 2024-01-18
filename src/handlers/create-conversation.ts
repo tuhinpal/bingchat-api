@@ -9,6 +9,7 @@ async function createConversation(req: Request, res: Response) {
       },
     });
     const data = response.data;
+    //console.log("Response Headers:", response.headers);
 
     if (data.result.value !== "Success") {
       throw new Error("Error creating conversation");
@@ -24,7 +25,8 @@ async function createConversation(req: Request, res: Response) {
       message: "Conversation created successfully",
       conversationId: data.conversationId,
       clientId: data.clientId,
-      conversationSignature: data.conversationSignature,
+      conversationSignature: data.conversationSignature || response.headers['x-sydney-conversationsignature'],
+      encryptedConversationSignature: data.conversationSignature || response.headers['x-sydney-encryptedconversationsignature'],
       conversationPath,
     });
   } catch (error: any) {
