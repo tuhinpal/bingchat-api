@@ -14,6 +14,12 @@ async function createConversation(req: Request, res: Response) {
       throw new Error("Error creating conversation");
     }
 
+    // fix to catch the new security-challence signature from response-headers
+    //console.log("Response Headers:", response.headers);
+    if (!data.conversationSignature) {
+      data.conversationSignature = response.headers['x-sydney-encryptedconversationsignature'];
+    }
+
     const conversationPath = `/generate?conversationId=${encodeURIComponent(
       data.conversationId
     )}&clientId=${encodeURIComponent(
